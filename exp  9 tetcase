@@ -1,0 +1,52 @@
+import pandas as pd
+import numpy as np
+
+# Data
+data = {
+    "FactorA": ["A1","A1","A1","A1","A2","A2","A2","A2","A3","A3","A3","A3"],
+    "FactorB": ["B1","B1","B2","B2","B1","B1","B2","B2","B1","B1","B2","B2"],
+    "Value":   [8,9,6,7,10,11,8,9,12,13,10,11]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+print("Dataset:")
+print(df)
+
+# Means
+grand_mean = df['Value'].mean()
+
+# Sum of Squares for FactorA
+ss_a = sum(len(df[df['FactorA']==a]) *
+           (df[df['FactorA']==a]['Value'].mean() - grand_mean)**2
+           for a in df['FactorA'].unique())
+
+# Sum of Squares for FactorB
+ss_b = sum(len(df[df['FactorB']==b]) *
+           (df[df['FactorB']==b]['Value'].mean() - grand_mean)**2
+           for b in df['FactorB'].unique())
+
+# Total Sum of Squares
+ss_total = sum((df['Value'] - grand_mean)**2)
+
+# Error Sum of Squares
+ss_error = ss_total - ss_a - ss_b
+
+# Degrees of freedom
+df_a = len(df['FactorA'].unique()) - 1
+df_b = len(df['FactorB'].unique()) - 1
+df_error = len(df) - (df_a + df_b + 1)
+
+# Mean Squares
+ms_a = ss_a / df_a
+ms_b = ss_b / df_b
+ms_error = ss_error / df_error
+
+# F values
+f_a = ms_a / ms_error
+f_b = ms_b / ms_error
+
+print("\nTwo-Way ANOVA Results:")
+print("F value for FactorA:", f_a)
+print("F value for FactorB:", f_b)
